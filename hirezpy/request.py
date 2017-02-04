@@ -105,12 +105,12 @@ class Request:
             ts = self._create_now_timestamp()
             sig = self._create_signature()
             if self._active_session:
-                to_join = (endpoint, call, self.client.dev_id, sig, self._active_session.get('session_id'), ts)
+                to_join = [endpoint, call, self.client.dev_id, sig, self._active_session.get('session_id'), ts]
             else:
-                to_join = (endpoint, call, self.client.dev_id, sig, ts)
+                to_join = [endpoint, call, self.client.dev_id, sig, ts]
             url = "/".join(to_join)
         else:
-            to_join = (endpoint, call)
+            to_join = [endpoint, call]
             url = "/".join(to_join)
 
         async with self.session.request(method, url, params=params) as req:

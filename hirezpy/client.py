@@ -54,11 +54,11 @@ class Client:
         self.loop = asyncio.get_event_loop() if loop is None else loop
 
         if default_endpoint is None or type(default_endpoint) is not Endpoint:
-            self.default_endpoint = Endpoint.smitepc
+            self.default_endpoint = str(Endpoint.smitepc)
 
         self.request = Request(self)
 
-    async def ping(self, *, endpoint=None):
+    async def ping(self, *, endpoint: Endpoint = None):
         """Pings the API in order to establish connectivity
 
         Parameters
@@ -73,10 +73,6 @@ class Client:
             Indicates if the ping was successful or not
 
         """
-        if endpoint is None:
-            endpoint = self.default_endpoint
+        endpoint = self.default_endpoint if endpoint is None else str(endpoint)
         res = await self.request.make_request(endpoint, 'pingJson', no_auth=True)
-        if 'successful' in res:
-            return True
-        else:
-            return False
+        return True if 'successful' in res else False

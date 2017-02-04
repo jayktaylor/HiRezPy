@@ -33,3 +33,6 @@ class Endpoint(Enum):
     smitexbox = 'http://api.xbox.smitegame.com/smiteapi.svc'
     smiteps = 'http://api.ps4.smitegame.com/smiteapi.svc'
     paladinspc = 'http://api.paladins.com/paladinsapi.svc'
+
+    def __str__(self):
+        return self.value
