@@ -52,9 +52,7 @@ class Client:
         self.dev_id = str(dev_id)
         self.auth_key = str(auth_key)
         self.loop = asyncio.get_event_loop() if loop is None else loop
-
-        if default_endpoint is None or type(default_endpoint) is not Endpoint:
-            self.default_endpoint = str(Endpoint.smitepc)
+        self.default_endpoint = str(Endpoint.smitepc) if default_endpoint is None else str(default_endpoint)
 
         self.request = Request(self)
 
