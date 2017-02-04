@@ -26,7 +26,7 @@ import asyncio
 
 from .endpoint import Endpoint
 from .request import Request
-from .objects import Limits
+from .objects import Limits, Match
 
 
 class Client:
@@ -98,3 +98,25 @@ class Client:
         res = await self.request.make_request(endpoint, 'getdataused')
         obj = Limits(**res[0])  # res should be a list, so we want the first element
         return obj
+
+    async def get_esports_details(self, *, endpoint: Endpoint = None):
+        """Returns the matchup information for each matchup for the current eSports Pro League season.
+
+        Parameters
+        ----------
+        endpoint : [optional] Endpoint
+            The endpoint to make the request with. If not specified,
+            Client.default_endpoint is used.
+
+        Returns
+        -------
+        list of Match objects
+
+        """
+        endpoint = self.default_endpoint if endpoint is None else str(endpoint)
+        res = await self.request.make_request(endpoint, 'getesportsproleaguedetails')
+        matches = []
+        for i in res:
+            obj = Match(**i)
+            matches.append(obj)
+        return set(matches)

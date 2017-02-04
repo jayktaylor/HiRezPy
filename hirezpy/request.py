@@ -70,7 +70,7 @@ class Request:
         now = self._create_now_timestamp()
         return hashlib.md5(self.client.dev_id.encode('utf-8') + methodname.encode('utf-8') + self.client.auth_key.encode('utf-8') + now.encode('utf-8')).hexdigest()
 
-    async def make_request(self, endpoint, call, *, method='GET', params={}, no_auth=False, session=None, bypass_session_test=False):
+    async def make_request(self, endpoint, call, *, method='GET', params=[], no_auth=False, session=None, bypass_session_test=False):
         """Makes an outgoing web request to an API and returns the result as JSON
 
         Parameters
@@ -82,8 +82,8 @@ class Request:
         method : [optional] str
             Override the method used to make HTTP requests.
             By default, this is GET.
-        params : [optional] dict
-            Parameters to send with the request.
+        params : [optional] list
+            Parameters to send with the request, in order
         no_auth : [optional] bool
             Specifies if the request requires authentication.
         bypass_session_test : [optional] bool
@@ -104,13 +104,21 @@ class Request:
             call = call + 'Json'
             if self._active_session is not None:
                 to_join = [endpoint, call, self.client.dev_id, sig, self._active_session.get('session_id'), ts]
+                if params:
+                    to_join += params
             else:
                 to_join = [endpoint, call, self.client.dev_id, sig, ts]
+                if params:
+                    to_join += params
             url = "/".join(to_join)
         else:
             call = call + 'Json'
             to_join = [endpoint, call]
+            if params:
+                to_join += params
             url = "/".join(to_join)
+
+        print(url)
 
         async with self.session.request(method, url, params=params) as req:
             if req.status != 200:
