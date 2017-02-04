@@ -26,6 +26,7 @@ import asyncio
 
 from .endpoint import Endpoint
 from .request import Request
+from .objects import Limits
 
 
 class Client:
@@ -67,10 +68,33 @@ class Client:
 
         Returns
         -------
-        bool
-            Indicates if the ping was successful or not
+        boolean equal to True
+
+        Raises
+        ------
+        ConnectionRefusedError
+            The request failed
 
         """
         endpoint = self.default_endpoint if endpoint is None else str(endpoint)
-        res = await self.request.make_request(endpoint, 'pingJson', no_auth=True)
-        return True if 'successful' in res else False
+        res = await self.request.make_request(endpoint, 'ping', no_auth=True)
+        return True if 'successful' in res else None
+
+    async def get_data_used(self, *, endpoint: Endpoint = None):
+        """Gets the data limits for the developer.
+
+        Parameters
+        ----------
+        endpoint : [optional] Endpoint
+            The endpoint to make the request with. If not specified,
+            Client.default_endpoint is used.
+
+        Returns
+        -------
+        Limit object
+
+        """
+        endpoint = self.default_endpoint if endpoint is None else str(endpoint)
+        res = await self.request.make_request(endpoint, 'getdataused')
+        obj = Limits(**res[0])  # res should be a list, so we want the first element
+        return obj

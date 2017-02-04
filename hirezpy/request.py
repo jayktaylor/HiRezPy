@@ -58,22 +58,19 @@ class Request:
         datime_now = datetime.utcnow()
         return datime_now.strftime("%Y%m%d%H%M%S")
 
-    def _create_signature(self, methodname, *, timestamp=None):
+    def _create_signature(self, methodname):
         """Generates a new MD5 hashed signature
 
         Parameters
         ----------
         methodname : str
             The method that will be called.
-        timestamp : [optional] str
-            The current timestamp. If not given, we will generate
-            a new one.
 
         """
-        now = self._create_now_timestamp() if timestamp is None else timestamp
+        now = self._create_now_timestamp()
         return hashlib.md5(self.client.dev_id.encode('utf-8') + methodname.encode('utf-8') + self.client.auth_key.encode('utf-8') + now.encode('utf-8')).hexdigest()
 
-    async def make_request(self, endpoint, call, *, method='GET', params={}, no_auth=False, bypass_session_test=False):
+    async def make_request(self, endpoint, call, *, method='GET', params={}, no_auth=False, session=None, bypass_session_test=False):
         """Makes an outgoing web request to an API and returns the result as JSON
 
         Parameters
@@ -94,31 +91,41 @@ class Request:
 
         Returns
         -------
-        dict
+        list or dict
             JSON data returned from the request
 
         """
         if no_auth is False:
             if bypass_session_test is False:
                 if not self._active_session or not self._test_session(endpoint, self._active_session):
-                    self._active_session = self._create_session()
+                    self._active_session = await self._create_session(endpoint)
             ts = self._create_now_timestamp()
-            sig = self._create_signature()
-            if self._active_session:
+            sig = self._create_signature(call)
+            call = call + 'Json'
+            if self._active_session is not None:
                 to_join = [endpoint, call, self.client.dev_id, sig, self._active_session.get('session_id'), ts]
             else:
                 to_join = [endpoint, call, self.client.dev_id, sig, ts]
             url = "/".join(to_join)
         else:
+            call = call + 'Json'
             to_join = [endpoint, call]
             url = "/".join(to_join)
 
         async with self.session.request(method, url, params=params) as req:
             if req.status != 200:
-                raise ConnectionRefusedError("There was a problem with your request. Returned HTTP {0.status}, using {0.method} -> {0.url}".format(req))
+                raise ConnectionError("There was a problem with your request. Returned HTTP {0.status}, using {0.method} -> {0.url}".format(req))
             json = await req.json()
-            if json is None:
-                raise TypeError("Result wasn't JSON. Using {0.method} -> {0.url}".format(req))
+
+        if json is None:
+            raise TypeError("Result wasn't JSON. Using {0.method} -> {0.url}".format(req))
+
+        try:
+            ret_msg = json['ret_msg']
+            if 'exception' in ret_msg.lower():
+                raise ConnectionError(ret_msg)
+        except TypeError:  # was a list instead, which is okay
+            pass
         return json
 
     async def _test_session(self, endpoint, session=None):
