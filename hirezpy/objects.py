@@ -131,7 +131,7 @@ class Match(HrpObject):
         self.id = int(kwargs.get('matchup_id'))
         self.number = int(kwargs.get('match_number'))
         self.status = kwargs.get('match_status')
-        self.region = kwargs.get('match_region')
+        self.region = kwargs.get('region')
         self.tournament = kwargs.get('tournament_name')
         self.map_instance_id = int(kwargs.get('map_instance_id'))
 
