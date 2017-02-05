@@ -35,16 +35,13 @@ with open('hirezpy/__init__.py') as f:
 if not version:
     raise RuntimeError("Invalid version")
 
-with open('README.md') as f:
-    rme = f.read()
-
 with open('requirements.txt') as f:
     req = f.read().splitlines()
 
 setup(name='HiRezPy',
     author='jaydenkieran',
     url='https://github.com/jaydenkieran/HiRezPy',
-    download_url='https://github.com/jaydenkieran/HiRezPy/tarball/0.1',
+    download_url='https://github.com/jaydenkieran/HiRezPy/tarball/0.1.1',
     version=version,
     packages=find_packages(),
     license='MIT',
