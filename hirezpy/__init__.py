@@ -29,4 +29,4 @@ __version__ = '0.1'
 
 from .client import Client
 from .endpoint import Endpoint
-from .objects import Limits
+from .objects import Limits, Match, Player

@@ -120,7 +120,7 @@ class Request:
 
         print(url)
 
-        async with self.session.request(method, url, params=params) as req:
+        async with self.session.request(method, url) as req:
             if req.status != 200:
                 raise ConnectionError("There was a problem with your request. Returned HTTP {0.status}, using {0.method} -> {0.url}".format(req))
             json = await req.json()

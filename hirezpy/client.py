@@ -26,7 +26,7 @@ import asyncio
 
 from .endpoint import Endpoint
 from .request import Request
-from .objects import Limits, Match
+from .objects import Limits, Match, Player
 
 
 class Client:
@@ -92,6 +92,7 @@ class Client:
         Returns
         -------
         Limit object
+            The developer limits.
 
         """
         endpoint = self.default_endpoint if endpoint is None else str(endpoint)
@@ -110,7 +111,8 @@ class Client:
 
         Returns
         -------
-        list of Match objects
+        set of Match objects
+            The matches in the current season.
 
         """
         endpoint = self.default_endpoint if endpoint is None else str(endpoint)
@@ -120,3 +122,36 @@ class Client:
             obj = Match(**i)
             matches.append(obj)
         return set(matches)
+
+    async def get_friends(self, username, *, endpoint: Endpoint = None):
+        """Returns information about a user's friends.
+
+        Parameters
+        ----------
+        username : str
+            The username of the player to get information about
+        endpoint : [optional] Endpoint
+            The endpoint to make the request with. If not specified,
+            Client.default_endpoint is used.
+
+        Returns
+        -------
+        list of Player objects or None
+            Represents the given user's friends. Will return None if
+            the user's privacy settings do not allow, or the
+            user given is invalid.
+
+        """
+        endpoint = self.default_endpoint if endpoint is None else str(endpoint)
+        res = await self.request.make_request(endpoint, 'getfriends', params=[username])
+        if not res:
+            res = None  # invalid user or privacy settings active
+        else:
+            players = []
+            for i in res:
+                if i['account_id'] == '0':  # privacy settings active, skip
+                    continue
+                obj = Player(**i)
+                players.append(obj)
+            res = players if players else None
+        return res

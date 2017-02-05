@@ -138,7 +138,7 @@ class Match(HrpObject):
         date = kwargs.get('match_date')
         try:
             date = datetime.strptime(date, '%-m/%-d/%Y %-I:%M:%S %p')
-        except ValueError:  # couldn't parse date and tie
+        except ValueError:  # couldn't parse date and time
             pass
         self.date = date
 
@@ -151,6 +151,43 @@ class Match(HrpObject):
 
     def __str__(self):
         return "<Match {}/{}/{}>".format(self.id, self.home_team_name, self.away_team_name)
+
+    def __hash__(self):
+        return hash(self.id)
+
+    def __eq__(self, other):
+        return self.id == other.id
+
+
+class Player(HrpObject):
+    """Represents a player.
+
+    You should not make these manually.
+
+    Attributes
+    ----------
+    id : int
+        The player's account ID. This is the ID of a player's
+        Hi-Rez account
+    player_id : int
+        The player's ID, based on the game that you are checking
+        against
+    avatar_url : str
+        The player's avatar image URL. Could be an empty string
+        if the user is using the default avatar.
+    username : str
+        The player's username
+
+    """
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.id = int(kwargs.get('account_id'))
+        self.player_id = int(kwargs.get('player_id'))
+        self.avatar_url = kwargs.get('avatar_url')
+        self.username = kwargs.get('name')
+
+    def __str__(self):
+        return "<Player {}>".format(self.id)
 
     def __hash__(self):
         return hash(self.id)
