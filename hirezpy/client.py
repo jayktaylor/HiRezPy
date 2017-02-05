@@ -26,7 +26,7 @@ import asyncio
 
 from .endpoint import Endpoint
 from .request import Request
-from .objects import Limits, Match, Player
+from .objects import Limits, Match, Player, Rank
 
 
 class Client:
@@ -154,4 +154,42 @@ class Client:
                 obj = Player(**i)
                 players.append(obj)
             res = players if players else None
+        return res
+
+    async def get_ranks(self, username, *, endpoint: Endpoint = None):
+        """Returns information about a user's god or champion ranks,
+        depending on the endpoint that is being called (Smite/Paladins)
+
+        Parameters
+        ----------
+        username : str
+            The username of the player to get information about
+        endpoint : [optional] Endpoint
+            The endpoint to make the request with. If not specified,
+            Client.default_endpoint is used.
+
+        Returns
+        -------
+        list of Rank objects or None
+            Represents the given user's ranks. Will return None if
+            the user's privacy settings do not allow, or the
+            user given is invalid.
+
+        """
+        endpoint = self.default_endpoint if endpoint is None else str(endpoint)
+        if endpoint == Endpoint.paladinspc.value:
+            res = await self.request.make_request(endpoint, 'getchampionranks', params=[username])
+        else:
+            res = await self.request.make_request(endpoint, 'getgodranks', params=[username])
+        if not res:
+            res = None  # invalid user or privacy settings active
+        else:
+            ranks = []
+            for i in res:
+                if 'god' not in i:  # must be paladins
+                    i['god'] = i['champion']
+                    i['god_id'] = i['champion_id']
+                obj = Rank(**i)
+                ranks.append(obj)
+            res = ranks if ranks else None
         return res

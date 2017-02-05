@@ -194,3 +194,60 @@ class Player(HrpObject):
 
     def __eq__(self, other):
         return self.id == other.id
+
+class Rank(HrpObject):
+    """Represents a character rank.
+
+    You should not make these manually.
+
+    Attributes
+    ----------
+    id : int
+        The character's ID
+    player_id : int
+        The player's ID, based on the game that you are checking
+        against
+    name : str
+        The character's name
+    assists : int
+        The amount of assists made with this character
+    deaths : int
+        The amount of deaths made with this character
+    kills : int
+        The amount of kills made with this character
+    losses : int
+        The amount of losses made with this character
+    minion_kills :  int
+        The amount of minion kills made with this character
+    rank : int
+        The rank gained with this character
+    wins : int
+        The amount of wins made with this character
+    xp : int
+        The amount of XP gained with this character. For Smite, this
+        will return the amount of worshippers. For Paladins, this will
+        be the amount of experience.
+
+    """
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.id = int(kwargs.get('god_id'))
+        self.player_id = int(kwargs.get('player_id'))
+        self.name = kwargs.get('god')
+        self.assists = int(kwargs.get('Assists'))
+        self.deaths = int(kwargs.get('Deaths'))
+        self.kills = int(kwargs.get('Kills'))
+        self.losses = int(kwargs.get('Losses'))
+        self.minion_kills = int(kwargs.get('MinionKills'))
+        self.rank = int(kwargs.get('Rank'))
+        self.wins = int(kwargs.get('Wins'))
+        self.xp = int(kwargs.get('Worshippers'))
+
+    def __str__(self):
+        return "<Rank {}/{}>".format(self.player_id, self.name)
+
+    def __hash__(self):
+        return hash(self.id)
+
+    def __eq__(self, other):
+        return self.id == other.id
