@@ -44,6 +44,7 @@ with open('requirements.txt') as f:
 setup(name='HiRezPy',
     author='jaydenkieran',
     url='https://github.com/jaydenkieran/HiRezPy',
+    download_url='https://github.com/jaydenkieran/HiRezPy/tarball/0.1',
     version=version,
     packages=find_packages(),
     license='MIT',
