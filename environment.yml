@@ -12,3 +12,4 @@ dependencies:
 - zlib=1.2.8=0
 - pip:
   - aiohttp>=1.0.5
+  - sphinxcontrib-napoleon
