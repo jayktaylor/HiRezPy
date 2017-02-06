@@ -46,7 +46,7 @@ class HrpObject:
 class Limits(HrpObject):
     """Represents developer usage limits.
 
-    You should not make these manually.
+    This is a sub-class of :class:`HrpObject`.
 
     Attributes
     ----------
@@ -96,7 +96,7 @@ class Limits(HrpObject):
 class Match(HrpObject):
     """Represents an eSports match.
 
-    You should not make these manually.
+    This is a sub-class of :class:`HrpObject`.
 
     Attributes
     ----------
@@ -165,7 +165,7 @@ class Match(HrpObject):
 class Player(HrpObject):
     """Represents a player.
 
-    You should not make these manually.
+    This is a sub-class of :class:`HrpObject`.
 
     Attributes
     ----------
@@ -202,7 +202,7 @@ class Player(HrpObject):
 class Rank(HrpObject):
     """Represents a character rank.
 
-    You should not make these manually.
+    This is a sub-class of :class:`HrpObject`.
 
     Attributes
     ----------
@@ -260,7 +260,7 @@ class Rank(HrpObject):
 class Character(HrpObject):
     """Represents a character.
 
-    You should not make these manually.
+    This is a sub-class of :class:`HrpObject`.
 
     Attributes
     ----------
@@ -294,7 +294,7 @@ class Character(HrpObject):
 class God(Character):
     """Represents a god in Smite.
 
-    You should not make these manually.
+    This is a sub-class of :class:`Character`.
 
     Attributes
     ----------
@@ -401,8 +401,6 @@ class God(Character):
 class Ability:
     """Represents a character's ability.
 
-    You should not make these manually.
-
     Parameters
     ----------
     id : int
@@ -422,7 +420,7 @@ class Ability:
 class GodAbility(Ability):
     """Represents a god's ability in Smite.
 
-    You should not make these manually.
+    This is a sub-class of :class:`Ability`.
 
     Parameters
     ----------
@@ -472,7 +470,7 @@ class GodAbility(Ability):
 class Champion(Character):
     """Represents a champion in Paladins.
 
-    You should not make these manually.
+    This is a sub-class of :class:`Character`.
 
     Attributes
     ----------
@@ -507,6 +505,8 @@ class Champion(Character):
 
 class ChampionAbility(Ability):
     """Represents a champion's ability in Paladins.
+
+    This is a sub-class of :class:`Ability`.
 
     Parameters
     ----------

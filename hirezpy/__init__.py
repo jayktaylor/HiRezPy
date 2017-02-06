@@ -25,7 +25,7 @@ SOFTWARE.
 __title__ = 'HiRezPy'
 __author__ = 'Jayden Bailey'
 __license__ = 'MIT'
-__version__ = '0.1.2'
+__version__ = '0.1.3'
 
 from .client import Client
 from .endpoint import Endpoint

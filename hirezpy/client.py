@@ -44,14 +44,14 @@ class Client:
     loop : [optional] event loop
         The event used for async ops. If this is the default (None),
         the bot will use asyncio's default event loop.
-    default_endpoint : [optional] Endpoint
+    default_endpoint : [optional] :class:`Endpoint`
         The endpoint that will be used by default for outgoing requests.
         You can use different endpoints per request without changing this.
-        Otherwise, this will be used. It defaults to Endpoint.smitepc.
-    default_language : [optional] Language
+        Otherwise, this will be used. It defaults to `Endpoint.smitepc`.
+    default_language : [optional] :class:`Language`
         The language that will be used by default when making requests.
         You can use different languages per request without changing this.
-        Otherwise, this will be used. It defaults to Language.english.
+        Otherwise, this will be used. It defaults to `Language.english`.
 
     """
     def __init__(self, dev_id, auth_key, *, loop=None, default_endpoint=None, default_language=None):
@@ -64,22 +64,19 @@ class Client:
         self.request = Request(self)
 
     async def ping(self, *, endpoint: Endpoint = None):
-        """Pings the API in order to establish connectivity
+        """|coro|
+
+        Pings the API in order to establish connectivity
 
         Parameters
         ----------
-        endpoint : [optional] Endpoint
+        endpoint : [optional] :class:`Endpoint`
             The endpoint to make the request with. If not specified,
             Client.default_endpoint is used.
 
         Returns
         -------
-        boolean equal to True
-
-        Raises
-        ------
-        ConnectionRefusedError
-            The request failed
+        boolean equal to `True`
 
         """
         endpoint = self.default_endpoint if endpoint is None else str(endpoint)
@@ -87,17 +84,19 @@ class Client:
         return True if 'successful' in res else None
 
     async def get_data_used(self, *, endpoint: Endpoint = None):
-        """Gets the data limits for the developer.
+        """|coro|
+
+        Gets the data limits for the developer.
 
         Parameters
         ----------
-        endpoint : [optional] Endpoint
+        endpoint : [optional] :class:`Endpoint`
             The endpoint to make the request with. If not specified,
             Client.default_endpoint is used.
 
         Returns
         -------
-        Limit object
+        :class:`Limits` object
             The developer limits.
 
         """
@@ -107,17 +106,19 @@ class Client:
         return obj
 
     async def get_esports_details(self, *, endpoint: Endpoint = None):
-        """Returns the matchup information for each matchup for the current eSports Pro League season.
+        """|coro|
+
+        Returns the matchup information for each matchup for the current eSports Pro League season.
 
         Parameters
         ----------
-        endpoint : [optional] Endpoint
+        endpoint : [optional] :class:`Endpoint`
             The endpoint to make the request with. If not specified,
             Client.default_endpoint is used.
 
         Returns
         -------
-        set of Match objects
+        set of :class:`Match` objects
             The matches in the current season.
 
         """
@@ -130,19 +131,21 @@ class Client:
         return set(matches)
 
     async def get_friends(self, username, *, endpoint: Endpoint = None):
-        """Returns information about a user's friends.
+        """|coro|
+
+        Returns information about a user's friends.
 
         Parameters
         ----------
         username : str
             The username of the player to get information about
-        endpoint : [optional] Endpoint
+        endpoint : [optional] :class:`Endpoint`
             The endpoint to make the request with. If not specified,
             Client.default_endpoint is used.
 
         Returns
         -------
-        list of Player objects or None
+        list of :class:`Player` objects or `None`
             Represents the given user's friends. Will return None if
             the user's privacy settings do not allow, or the
             user given is invalid.
@@ -163,20 +166,22 @@ class Client:
         return res
 
     async def get_ranks(self, username, *, endpoint: Endpoint = None):
-        """Returns information about a user's god or champion ranks,
+        """|coro|
+
+        Returns information about a user's god or champion ranks,
         depending on the endpoint that is being called (Smite/Paladins)
 
         Parameters
         ----------
         username : str
             The username of the player to get information about
-        endpoint : [optional] Endpoint
+        endpoint : [optional] :class:`Endpoint`
             The endpoint to make the request with. If not specified,
             Client.default_endpoint is used.
 
         Returns
         -------
-        list of Rank objects or None
+        list of :class:`Rank` objects or `None`
             Represents the given user's ranks. Will return None if
             the user's privacy settings do not allow, or the
             user given is invalid.
@@ -201,21 +206,23 @@ class Client:
         return res
 
     async def get_characters(self, language: Language = None, *, endpoint: Endpoint = None):
-        """Returns information about the characters in the game.
+        """|coro|
+
+        Returns information about the characters in the game.
         For Smite, this is the gods in the game. For Paladins, the champions.
 
         Parameters
         ----------
-        langauge : [optional] Language
+        langauge : [optional] :class:`Language`
             The language code to get the information with. If not specified,
             Client.default_language is used.
-        endpoint : [optional] Endpoint
+        endpoint : [optional] :class:`Endpoint`
             The endpoint to make the request with. If not specified,
             Client.default_endpoint is used.
 
         Returns
         -------
-        list of God or Champion objects
+        list of :class:`God` or :class:`Champion` objects
             Returns the characters in the game. God objects will be reteurned
             if the game is Smite, else Champion objects.
 
