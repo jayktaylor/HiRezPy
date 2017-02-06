@@ -26,7 +26,7 @@ import asyncio
 
 from .endpoint import Endpoint
 from .request import Request
-from .objects import Limits, Match, Player, Rank, God
+from .objects import Limits, Match, Player, Rank, God, Champion
 from .language import Language
 
 
@@ -224,7 +224,10 @@ class Client:
         language = str(self.default_language if language is None else int(language))
         if endpoint == Endpoint.paladinspc.value:
             res = await self.request.make_request(endpoint, 'getchampions', params=[language])
-            characters = None
+            characters = []
+            for i in res:
+                obj = Champion(**i)
+                characters.append(obj)
         else:
             res = await self.request.make_request(endpoint, 'getgods', params=[language])
             characters = []

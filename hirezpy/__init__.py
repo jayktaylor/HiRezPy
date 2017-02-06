@@ -29,5 +29,5 @@ __version__ = '0.1.2'
 
 from .client import Client
 from .endpoint import Endpoint
-from .objects import Limits, Match, Player, Rank, God
+from .objects import *
 from .language import Language

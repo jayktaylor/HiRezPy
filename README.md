@@ -27,9 +27,9 @@ from hirezpy import Client
 client = Client("YOUR_DEV_ID", "YOUR_AUTH_KEY")
 r = client.loop.run_until_complete(client.get_friends('Dussed'))
 
-if r is not None
+if r is not None:
     for u in r:
         print(u.username)
 ```
 
-This example will print the username of everyone that is friends with the player **Dussed**'. As we didn't specify an endpoint to use, and didn't override the default when initialising our Client object, it defaults to the Smite PC endpoint.
+This example will print the username of everyone that is friends with the player **Dussed**. As we didn't specify an endpoint to use, and didn't override the default when initialising our Client object, it defaults to the Smite PC endpoint.

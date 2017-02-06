@@ -343,6 +343,10 @@ class God(Character):
         Indicates if the god was recently added to the game
     basic_attack : GodAbility
         The god's basic attack
+    god_icon_url : str
+        The URL of the god's icon
+    god_card_url : str
+        The URL of the god's card
 
     """
     def __init__(self, **kwargs):
@@ -387,9 +391,12 @@ class God(Character):
         data = kwargs.get('basicAttack')
         self.basic_attack = GodAbility(**data)
 
+        self.god_icon_url = kwargs.get('godIcon_URL')
+        self.god_card_url = kwargs.get('godCard_URL')
 
-class GodAbility:
-    """Represents a god's ability in Smite.
+
+class Ability:
+    """Represents a character's ability.
 
     You should not make these manually.
 
@@ -401,6 +408,21 @@ class GodAbility:
         The name of the ability
     url : str
         The URL of the ability image
+
+    """
+    def __init__(self, **kwargs):
+        self.id = kwargs.get('Id')
+        self.name = kwargs.get('Summary')
+        self.url = kwargs.get('URL')
+
+
+class GodAbility(Ability):
+    """Represents a god's ability in Smite.
+
+    You should not make these manually.
+
+    Parameters
+    ----------
     type : str
         The type of ability
     affects : str
@@ -416,10 +438,7 @@ class GodAbility:
 
     """
     def __init__(self, **kwargs):
-        self.id = kwargs.get('Id')
-        self.name = kwargs.get('Summary')
-        self.url = kwargs.get('URL')
-
+        super().__init__(**kwargs)
         self.type = ""
         self.affects = ""
         self.damage = ""
@@ -445,3 +464,54 @@ class GodAbility:
             self.attributes = kwargs.get('Description').get('itemDescription').get('rankitems')
         except AttributeError:  # probably a basic attack
             self.attributes = kwargs.get('itemDescription').get('rankitems')
+
+
+class Champion(Character):
+    """Represents a champion in Paladins.
+
+    You should not make these manually.
+
+    Attributes
+    ----------
+    abilities : list
+        List of ChampionAbility objects
+    latest : bool
+        Indicates if the champion was recently added to the game
+    champion_icon_url : str
+        The URL of the champion's icon
+
+    """
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+        abilities = []
+        for i in range(5):
+            i = i + 1  # hacky
+            data = kwargs.get("Ability_{}".format(i))
+            obj = ChampionAbility(**data)
+            abilities.append(obj)
+
+        self.abilities = abilities
+
+        latest = kwargs.get('latestChampion')
+        if latest == 'y':
+            self.latest = True
+        else:
+            self.latest = False
+
+        self.champion_icon_url = kwargs.get('ChampionIcon_URL')
+
+
+class ChampionAbility(Ability):
+    """Represents a champion's ability in Paladins.
+
+    Parameters
+    ----------
+    description : str
+        The description of the ability
+
+    """
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+        self.description = kwargs.get('Description')
