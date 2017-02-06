@@ -30,6 +30,7 @@ rme = ''
 req = []
 
 with open('hirezpy/__init__.py') as f:
+    # thanks Danny for this 10/10 regex
     version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]', f.read(), re.MULTILINE).group(1)
 
 if not version:
@@ -38,8 +39,12 @@ if not version:
 with open('requirements.txt') as f:
     req = f.read().splitlines()
 
+with open('README.md') as f:
+    rme = f.read()
+
 setup(name='HiRezPy',
     author='jaydenkieran',
+    author_email='jaydenkieran@gmail.com',
     url='https://github.com/jaydenkieran/HiRezPy',
     download_url='https://github.com/jaydenkieran/HiRezPy/tarball/0.1.1',
     version=version,
@@ -49,6 +54,10 @@ setup(name='HiRezPy',
     long_description=rme,
     install_requires=req,
     classifiers=[
-        'Programming Language :: Python :: 3.5'
-    ]
+        'Development Status :: 3 - Alpha',
+        'Programming Language :: Python :: 3.5',
+        'License :: OSI Approved :: MIT License',
+        'Intended Audience :: Developers'
+    ],
+    keywords='hirez smite paladins api wrapper library'
 )
