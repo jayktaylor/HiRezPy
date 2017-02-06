@@ -2,6 +2,7 @@
 
 [![PyPI](https://img.shields.io/pypi/v/hirezpy.svg)](https://pypi.python.org/pypi/hirezpy/)
 [![Versions](https://img.shields.io/pypi/pyversions/hirezpy.svg)](https://pypi.python.org/pypi/hirezpy/)
+[![Documentation Status](https://readthedocs.org/projects/hirezpy/badge/?version=latest)](http://hirezpy.readthedocs.io/en/latest/?badge=latest)
 
 **HiRezPy** is an asynchronous library developed in Python 3 for accessing information from [Hi-Rez Games](http://www.hirezstudios.com/)' APIs, for both *[Smite](https://www.smitegame.com/)* and *[Paladins](https://www.paladins.com/)*. It is a continuation and rework of my previous project, [`smite-python`](https://github.com/jaydenkieran/smite-python).
 
