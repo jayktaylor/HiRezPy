@@ -31,3 +31,7 @@ from .client import Client
 from .endpoint import Endpoint
 from .objects import *
 from .language import Language
+
+import logging
+
+log = logging.getLogger(__name__)

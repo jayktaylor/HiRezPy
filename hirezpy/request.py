@@ -25,10 +25,13 @@ SOFTWARE.
 import aiohttp
 import sys
 import hashlib
+import logging
 
 from . import __version__ as hrpver
 
 from datetime import datetime
+
+log = logging.getLogger(__name__)
 
 
 class Request:
@@ -55,12 +58,15 @@ class Request:
 
     async def _create_connection(self):
         # this is a fucking joke but how else will I suppress stupid aiohttp warnings
+        log.debug("Creating aiohttp client session")
         return aiohttp.ClientSession(loop=self.client.loop, headers=self.headers)
 
     def _create_now_timestamp(self):
         """Generates a new timestamp"""
         datime_now = datetime.utcnow()
-        return datime_now.strftime("%Y%m%d%H%M%S")
+        ts = datime_now.strftime("%Y%m%d%H%M%S")
+        log.debug("Timestamp generated: {}".format(ts))
+        return ts
 
     def _create_signature(self, methodname):
         """Generates a new MD5 hashed signature
@@ -72,7 +78,9 @@ class Request:
 
         """
         now = self._create_now_timestamp()
-        return hashlib.md5(self.client.dev_id.encode('utf-8') + methodname.encode('utf-8') + self.client.auth_key.encode('utf-8') + now.encode('utf-8')).hexdigest()
+        sig = hashlib.md5(self.client.dev_id.encode('utf-8') + methodname.encode('utf-8') + self.client.auth_key.encode('utf-8') + now.encode('utf-8')).hexdigest()
+        log.debug("Signature generated: {}".format(sig))
+        return sig
 
     async def make_request(self, endpoint, call, *, method='GET', params=[], no_auth=False, session=None, bypass_session_test=False):
         """Makes an outgoing web request to an API and returns the result as JSON
@@ -122,7 +130,7 @@ class Request:
                 to_join += params
             url = "/".join(to_join)
 
-        print(url)
+        log.debug("Making {} request to {}".format(method, url))
 
         async with self.session.request(method, url) as req:
             if req.status != 200:
@@ -160,10 +168,13 @@ class Request:
             # do nothing
             return
 
+        log.debug("Testing session: {}".format(session))
         res = await self.make_request(endpoint, 'testsession', bypass_session_test=True)
         if 'successful' in res:
+            log.debug("Session is valid")
             return True
         else:
+            log.debug("Session is invalid")
             return False
 
     async def _create_session(self, endpoint):
@@ -180,5 +191,6 @@ class Request:
             JSON data returned from the request
 
         """
+        log.debug("Creating a new API session")
         res = await self.make_request(endpoint, 'createsession', bypass_session_test=True)
         return res

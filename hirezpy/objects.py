@@ -22,6 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 from datetime import datetime
+import logging
+
+log = logging.getLogger(__name__)
 
 
 class HrpObject:
@@ -139,7 +142,7 @@ class Match(HrpObject):
         try:
             date = datetime.strptime(date, '%-m/%-d/%Y %-I:%M:%S %p')
         except ValueError:  # couldn't parse date and time
-            pass
+            log.warning("Could not parse date and timestamp in data, returning as string")
         self.date = date
 
         self.away_team_id = int(kwargs.get('away_team_clan_id'))
