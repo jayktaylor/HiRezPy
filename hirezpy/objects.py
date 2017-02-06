@@ -195,6 +195,7 @@ class Player(HrpObject):
     def __eq__(self, other):
         return self.id == other.id
 
+
 class Rank(HrpObject):
     """Represents a character rank.
 
@@ -251,3 +252,196 @@ class Rank(HrpObject):
 
     def __eq__(self, other):
         return self.id == other.id
+
+
+class Character(HrpObject):
+    """Represents a character.
+
+    You should not make these manually.
+
+    Attributes
+    ----------
+    id : int
+        The character's ID
+    health : int
+        The character's health
+    name : str
+        The character's name
+    pantheon : str
+        The character's pantheon
+    speed : int
+        The character's speed
+    title : str
+        The character's title
+    roles : str
+        The character's roles
+
+    """
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.id = kwargs.get('id')
+        self.health = kwargs.get('Health')
+        self.name = kwargs.get('Name')
+        self.pantheon = kwargs.get('Pantheon')
+        self.speed = kwargs.get('Speed')
+        self.title = kwargs.get('Title')
+        self.roles = kwargs.get('Roles')
+
+
+class God(Character):
+    """Represents a god in Smite.
+
+    You should not make these manually.
+
+    Attributes
+    ----------
+    abilities : list
+        List of GodAbility objects representing the god's abilities
+    attack_speed : int
+        The attack speed of the god
+    attack_speed_per_level : int
+        The attack speed per level gained
+    cons : str
+        The cons of the god
+    hp5_per_level : int
+        The HP5 per level gained
+    health_per_five : int
+        The god's health per five
+    health_per_level : int
+        The god's health per level
+    lore : str
+        The god's lore
+    mp5_per_level : int
+        The MP5 per level gained
+    magic_protection : int
+        The god's magic protection
+    magic_protection_per_level : int
+        The god's magic protection per level gained
+    magical_power : int
+        The god's magical power
+    magical_power_per_level : int
+        The god's magical power per level gained
+    mana : int
+        The god's mana
+    mana_per_five : int
+        The god's mana per five
+    mana_per_level : int
+        The god's mana per level
+    physical_power : int
+        The god's physical power
+    physical_power_per_level : int
+        The god's physical power per level
+    physical_protection : int
+        The god's physical protection
+    physical_protection_per_level : int
+        The god's physical protection per level
+    pros : str
+        The god's pros
+    type : str
+        The god's type
+    latest : bool
+        Indicates if the god was recently added to the game
+    basic_attack : GodAbility
+        The god's basic attack
+
+    """
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.attack_speed = kwargs.get('AttackSpeed')
+        self.attack_speed_per_level = kwargs.get('AttackSpeedPerLevel')
+        self.cons = kwargs.get('Cons')
+        self.hp5_per_level = kwargs.get('HP5PerLevel')
+        self.health_per_five = kwargs.get('HealthPerFive')
+        self.health_per_level = kwargs.get('HealthPerLevel')
+        self.lore = kwargs.get('Lore')
+        self.mp5_per_level = kwargs.get('MP5PerLevel')
+        self.magic_protection = kwargs.get('MagicProtection')
+        self.magic_protection_per_level = kwargs.get('MagicProtectionPerLevel')
+        self.magical_power = kwargs.get('MagicalPower')
+        self.magical_power_per_level = kwargs.get('MagicalPowerPerLevel')
+        self.mana = kwargs.get('Mana')
+        self.mana_per_five = kwargs.get('ManaPerFive')
+        self.mana_per_level = kwargs.get('ManaPerLevel')
+        self.physical_power = kwargs.get('PhysicalPower')
+        self.physical_power_per_level = kwargs.get('PhysicalPowerPerLevel')
+        self.physical_protection = kwargs.get('PhysicalProtection')
+        self.physical_protection_per_level = kwargs.get('PhysicalProtectionPerLevel')
+        self.pros = kwargs.get('Pros')
+        self.type = kwargs.get('Type')
+
+        latest = kwargs.get('latestGod')
+        if latest == 'y':
+            self.latest = True
+        else:
+            self.latest = False
+
+        abilities = []
+        for i in range(5):
+            i = i + 1  # hacky
+            data = kwargs.get("Ability_{}".format(i))
+            obj = GodAbility(**data)
+            abilities.append(obj)
+
+        self.abilities = abilities
+
+        data = kwargs.get('basicAttack')
+        self.basic_attack = GodAbility(**data)
+
+
+class GodAbility:
+    """Represents a god's ability in Smite.
+
+    You should not make these manually.
+
+    Parameters
+    ----------
+    id : int
+        The ID of the ability
+    name : str
+        The name of the ability
+    url : str
+        The URL of the ability image
+    type : str
+        The type of ability
+    affects : str
+        Who the ability affects
+    damage : str
+        What type of damage the ability does. If it is a basic
+        attack, this will instead be how much damage the
+        attack does.
+    radius : str
+        The radius of the ability
+    attributes : list
+        A list of the ability's attributes
+
+    """
+    def __init__(self, **kwargs):
+        self.id = kwargs.get('Id')
+        self.name = kwargs.get('Summary')
+        self.url = kwargs.get('URL')
+
+        self.type = ""
+        self.affects = ""
+        self.damage = ""
+        self.radius = ""
+
+        try:
+            menuitems = kwargs.get('Description').get('itemDescription').get('menuitems')
+        except AttributeError:  # probably a basic attack
+            menuitems = kwargs.get('itemDescription').get('menuitems')
+
+        for i in menuitems:
+            d = i['description'].lower()
+            if 'ability' in d:
+                self.type = i['value']
+            elif 'affects' in d:
+                self.affects = i['value']
+            elif 'damage' in d:
+                self.damage = i['value']
+            elif 'radius' in d:
+                self.radius = i['value']
+
+        try:
+            self.attributes = kwargs.get('Description').get('itemDescription').get('rankitems')
+        except AttributeError:  # probably a basic attack
+            self.attributes = kwargs.get('itemDescription').get('rankitems')

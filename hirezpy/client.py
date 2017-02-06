@@ -26,7 +26,8 @@ import asyncio
 
 from .endpoint import Endpoint
 from .request import Request
-from .objects import Limits, Match, Player, Rank
+from .objects import Limits, Match, Player, Rank, God
+from .language import Language
 
 
 class Client:
@@ -47,13 +48,18 @@ class Client:
         The endpoint that will be used by default for outgoing requests.
         You can use different endpoints per request without changing this.
         Otherwise, this will be used. It defaults to Endpoint.smitepc.
+    default_language : [optional] Language
+        The language that will be used by default when making requests.
+        You can use different languages per request without changing this.
+        Otherwise, this will be used. It defaults to Language.english.
 
     """
-    def __init__(self, dev_id, auth_key, *, loop=None, default_endpoint=None):
+    def __init__(self, dev_id, auth_key, *, loop=None, default_endpoint=None, default_language=None):
         self.dev_id = str(dev_id)
         self.auth_key = str(auth_key)
         self.loop = asyncio.get_event_loop() if loop is None else loop
         self.default_endpoint = str(Endpoint.smitepc) if default_endpoint is None else str(default_endpoint)
+        self.default_language = int(Language.english) if default_language is None else int(default_language)
 
         self.request = Request(self)
 
@@ -193,3 +199,36 @@ class Client:
                 ranks.append(obj)
             res = ranks if ranks else None
         return res
+
+    async def get_characters(self, language: Language = None, *, endpoint: Endpoint = None):
+        """Returns information about the characters in the game.
+        For Smite, this is the gods in the game. For Paladins, the champions.
+
+        Parameters
+        ----------
+        langauge : [optional] Language
+            The language code to get the information with. If not specified,
+            Client.default_language is used.
+        endpoint : [optional] Endpoint
+            The endpoint to make the request with. If not specified,
+            Client.default_endpoint is used.
+
+        Returns
+        -------
+        list of God or Champion objects
+            Returns the characters in the game. God objects will be reteurned
+            if the game is Smite, else Champion objects.
+
+        """
+        endpoint = self.default_endpoint if endpoint is None else str(endpoint)
+        language = str(self.default_language if language is None else int(language))
+        if endpoint == Endpoint.paladinspc.value:
+            res = await self.request.make_request(endpoint, 'getchampions', params=[language])
+            characters = None
+        else:
+            res = await self.request.make_request(endpoint, 'getgods', params=[language])
+            characters = []
+            for i in res:
+                obj = God(**i)
+                characters.append(obj)
+        return characters

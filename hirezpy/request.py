@@ -48,10 +48,14 @@ class Request:
 
         pyver = sys.version_info
         aiover = aiohttp.__version__
-        headers = {"User-Agent": "HiRezPy/{0} [Python/{1.major}.{1.minor} aiohttp/{2}]".format(hrpver, pyver, aiover)}
+        self.headers = {"User-Agent": "HiRezPy/{0} [Python/{1.major}.{1.minor} aiohttp/{2}]".format(hrpver, pyver, aiover)}
 
-        self.session = aiohttp.ClientSession(loop=client.loop, headers=headers)
+        self.session = client.loop.run_until_complete(self._create_connection())
         self._active_session = None
+
+    async def _create_connection(self):
+        # this is a fucking joke but how else will I suppress stupid aiohttp warnings
+        return aiohttp.ClientSession(loop=self.client.loop, headers=self.headers)
 
     def _create_now_timestamp(self):
         """Generates a new timestamp"""

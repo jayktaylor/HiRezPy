@@ -22,12 +22,22 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-__title__ = 'HiRezPy'
-__author__ = 'Jayden Bailey'
-__license__ = 'MIT'
-__version__ = '0.1.2'
+from enum import Enum
 
-from .client import Client
-from .endpoint import Endpoint
-from .objects import Limits, Match, Player, Rank, God
-from .language import Language
+
+class Language(Enum):
+    """Enum representing languages that can be used with this library
+
+    """
+    english = 1
+    german = 2
+    french = 3
+    spanish = 7
+    spanish_latin = 9
+    portuguese = 10
+    russian = 11
+    polish = 12
+    turkish = 13
+
+    def __int__(self):
+        return self.value
