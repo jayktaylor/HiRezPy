@@ -26,7 +26,7 @@ import asyncio
 
 from .endpoint import Endpoint
 from .request import Request
-from .objects import Limits, Match, Player, Rank, God, Champion
+from .objects import Limits, Match, Player, Rank, God, Champion, GodSkin, ChampionSkin
 from .language import Language
 
 
@@ -42,7 +42,7 @@ class Client:
         Used for authentication. This is the authentication key that you
         receive from Hi-Rez Studios.
     loop : [optional] event loop
-        The event used for async ops. If this is the default (None),
+        The event loop used for async ops. If this is the default (None),
         the bot will use asyncio's default event loop.
     default_endpoint : [optional] :class:`Endpoint`
         The endpoint that will be used by default for outgoing requests.
@@ -205,7 +205,7 @@ class Client:
             res = ranks if ranks else None
         return res
 
-    async def get_characters(self, language: Language = None, *, endpoint: Endpoint = None):
+    async def get_characters(self, *, language: Language = None, endpoint: Endpoint = None):
         """|coro|
 
         Returns information about the characters in the game.
@@ -242,3 +242,49 @@ class Client:
                 obj = God(**i)
                 characters.append(obj)
         return characters
+
+    async def get_skins(self, characterid, *, language: Language = None, endpoint: Endpoint = None):
+        """|coro|
+
+        Return the skins for a character.
+
+        Parameters
+        ----------
+        characterid : str
+            The character to get skins for
+        langauge : [optional] :class:`Language`
+            The language code to get the information with. If not specified,
+            Client.default_language is used.
+        endpoint : [optional] :class:`Endpoint`
+            The endpoint to make the request with. If not specified,
+            Client.default_endpoint is used.
+
+        Returns
+        -------
+        list of :class:`Skin` or None
+            Returns the skins for a character. Returns None if an
+            invalid ID is given and no data is returned.
+
+        """
+        endpoint = self.default_endpoint if endpoint is None else str(endpoint)
+        language = str(self.default_language if language is None else int(language))
+        characterid = str(characterid)
+        if endpoint == Endpoint.paladinspc.value:
+            res = await self.request.make_request(endpoint, 'getchampionskins', params=[characterid, language])
+            if not res:
+                skins = None
+            else:
+                skins = []
+                for i in res:
+                    obj = ChampionSkin(**i)
+                    skins.append(obj)
+        else:
+            res = await self.request.make_request(endpoint, 'getgodskins', params=[characterid, language])
+            if not res:
+                skins = None
+            else:
+                skins = []
+                for i in res:
+                    obj = GodSkin(**i)
+                    skins.append(obj)
+        return skins

@@ -290,6 +290,15 @@ class Character(HrpObject):
         self.title = kwargs.get('Title')
         self.roles = kwargs.get('Roles')
 
+    def __str__(self):
+        return "<Character {}/{}>".format(self.id, self.name)
+
+    def __hash__(self):
+        return hash(self.id)
+
+    def __eq__(self, other):
+        return self.id == other.id
+
 
 class God(Character):
     """Represents a god in Smite.
@@ -416,6 +425,15 @@ class Ability:
         self.name = kwargs.get('Summary')
         self.url = kwargs.get('URL')
 
+    def __str__(self):
+        return "<Ability {}/{}>".format(self.id, self.name)
+
+    def __hash__(self):
+        return hash(self.id)
+
+    def __eq__(self, other):
+        return self.id == other.id
+
 
 class GodAbility(Ability):
     """Represents a god's ability in Smite.
@@ -518,3 +536,80 @@ class ChampionAbility(Ability):
         super().__init__(**kwargs)
 
         self.description = kwargs.get('Description')
+
+
+class Skin:
+    """Represents a skin.
+
+    Parameters
+    ----------
+    id : int
+        The first ID of the skin
+    id2 : int
+        The second ID of the skin
+    name : str
+        The name of the skin
+
+    """
+    def __init__(self, **kwargs):
+        self.id = kwargs.get('skin_id1')
+        self.id2 = kwargs.get('skin_id2')
+        self.name = kwargs.get('skin_name')
+
+    def __str__(self):
+        return "<Skin {}/{}>".format(self.id, self.name)
+
+    def __hash__(self):
+        return hash(self.id)
+
+    def __eq__(self, other):
+        return self.id == other.id
+
+
+class GodSkin(Skin):
+    """Represents a god skin.
+
+    This is a sub-class of :class:`Skin`.
+
+    Parameters
+    ----------
+    rarity : str
+        How rare the skin is
+    favor : int
+        How much favor the skin costs
+    gems : int
+        How many gems the skin costs
+    god_id : int
+        The ID of the god
+    god_name : str
+        The name of the god
+
+    """
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.rarity = kwargs.get('obtainability')
+        self.favor = kwargs.get('price_favor')
+        self.gems = kwargs.get('price_gems')
+        self.god_id = kwargs.get('god_id')
+        self.god_name = kwargs.get('god_name')
+        self.icon_url = kwargs.get('godIcon_URL')
+        self.card_url = kwargs.get('godSkin_URL')
+
+
+class ChampionSkin(Skin):
+    """Represents a champion skin.
+
+    This is a sub-class of :class:`Skin`.
+
+    Parameters
+    ----------
+    champion_id : int
+        The ID of the champion
+    champion_name : str
+        The name of the champion
+
+    """
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.champion_id = kwargs.get('champion_id')
+        self.champion_name = kwargs.get('champion_name')
