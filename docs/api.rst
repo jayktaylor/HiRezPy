@@ -109,3 +109,21 @@ ChampionAbility
 
 .. autoclass:: ChampionAbility
     :members:
+
+Skin
+~~~~
+
+.. autoclass:: Skin
+    :members:
+
+GodSkin
+~~~~~~~
+
+.. autoclass:: GodSkin
+    :members:
+
+ChampionSkin
+~~~~~~~~~~~~
+
+.. autoclass:: ChampionSkin
+    :members:
