@@ -23,11 +23,14 @@ SOFTWARE.
 """
 
 import asyncio
+import logging
 
 from .endpoint import Endpoint
 from .request import Request
-from .objects import Limits, Match, Player, Rank, God, Champion, GodSkin, ChampionSkin
+from .objects import Limits, Match, Player, Rank, God, Champion, GodSkin, ChampionSkin, Item
 from .language import Language
+
+log = logging.getLogger(__name__)
 
 
 class Client:
@@ -261,7 +264,7 @@ class Client:
 
         Returns
         -------
-        list of :class:`Skin` or None
+        list of :class:`GodSkin`, :class:`ChampionSkin` or None
             Returns the skins for a character. Returns None if an
             invalid ID is given and no data is returned.
 
@@ -288,3 +291,46 @@ class Client:
                     obj = GodSkin(**i)
                     skins.append(obj)
         return skins
+
+    async def get_recommended_items(self, characterid, *, language: Language = None, endpoint: Endpoint = None):
+        """|coro|
+
+        Return the recommended items for a character.
+
+        Parameters
+        ----------
+        characterid : str
+            The character to check against
+        langauge : [optional] :class:`Language`
+            The language code to get the information with. If not specified,
+            Client.default_language is used.
+        endpoint : [optional] :class:`Endpoint`
+            The endpoint to make the request with. If not specified,
+            Client.default_endpoint is used.
+
+        Returns
+        -------
+        set of :class:`Item` or None
+            Returns the recommended items for a character. Returns None if an
+            invalid ID is given and no data is returned.
+
+        """
+        endpoint = self.default_endpoint if endpoint is None else str(endpoint)
+        language = str(self.default_language if language is None else int(language))
+        characterid = str(characterid)
+        if endpoint == Endpoint.paladinspc.value:
+            # res = await self.request.make_request(endpoint, 'getchampionrecommendeditems', params=[characterid, language])
+
+            # TODO: find out why this does not seem to work
+            log.warning("get_recommended_items is currently not supported on the Paladins endpoint.")
+            return None
+        else:
+            res = await self.request.make_request(endpoint, 'getgodrecommendeditems', params=[characterid, language])
+            if not res:
+                items = None
+            else:
+                items = []
+                for i in res:
+                    obj = Item(**i)
+                    items.append(obj)
+        return set(items)

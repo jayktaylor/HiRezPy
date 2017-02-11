@@ -613,3 +613,52 @@ class ChampionSkin(Skin):
         super().__init__(**kwargs)
         self.champion_id = kwargs.get('champion_id')
         self.champion_name = kwargs.get('champion_name')
+
+
+class Item(HrpObject):
+    """Represents an in-game item
+
+    This is a sub-class of :class:`HrpObject`.
+
+    Parameters
+    ----------
+    category : str
+        The category of the item
+    name : str
+        The name of the item
+    id : int
+        The ID of the item
+    icon_id : int
+        The ID of the item's icon
+    category_id : int
+        The ID of the category
+    role_id : int
+        The ID of the role
+    role : str
+        The item's role
+    god_id : int
+        The god's ID
+    god_name : str
+        The god's name
+
+    """
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.category = kwargs.get('Category')
+        self.name = kwargs.get('Item')
+        self.id = kwargs.get('item_id')
+        self.icon_id = kwargs.get('icon_id')
+        self.category_id = kwargs.get('category_value_id')
+        self.role_id = kwargs.get('role_value_id')
+        self.role = kwargs.get('Role')
+        self.god_id = kwargs.get('god_id')
+        self.god_name = kwargs.get('god_name')
+
+    def __str__(self):
+        return "<Item {}/{}>".format(self.id, self.name)
+
+    def __hash__(self):
+        return hash(self.id)
+
+    def __eq__(self, other):
+        return self.id == other.id
